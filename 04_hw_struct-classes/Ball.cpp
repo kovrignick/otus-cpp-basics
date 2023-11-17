@@ -7,6 +7,7 @@
  */
 void Ball::setVelocity(const Velocity& velocity) {
     // TODO: место для доработки
+    m_velocity = velocity;
 }
 
 /**
@@ -14,9 +15,13 @@ void Ball::setVelocity(const Velocity& velocity) {
  */
 Velocity Ball::getVelocity() const {
     // TODO: место для доработки
-    return {};
+    return m_velocity;
 }
 
+
+void Ball::setColor(const Color& color) {
+    m_color = color;
+}
 /**
  * @brief Выполняет отрисовку объекта
  * @details объект Ball абстрагирован от конкретного
@@ -27,6 +32,7 @@ Velocity Ball::getVelocity() const {
  */
 void Ball::draw(Painter& painter) const {
     // TODO: место для доработки
+    painter.draw(m_center, m_radius, m_color);
 }
 
 /**
@@ -35,6 +41,7 @@ void Ball::draw(Painter& painter) const {
  */
 void Ball::setCenter(const Point& center) {
     // TODO: место для доработки
+    m_center = center;
 }
 
 /**
@@ -42,7 +49,7 @@ void Ball::setCenter(const Point& center) {
  */
 Point Ball::getCenter() const {
     // TODO: место для доработки
-    return {};
+    return m_center;
 }
 
 /**
@@ -52,7 +59,7 @@ Point Ball::getCenter() const {
  */
 double Ball::getRadius() const {
     // TODO: место для доработки
-    return {};
+    return m_radius;
 }
 
 /**
@@ -64,5 +71,5 @@ double Ball::getRadius() const {
  */
 double Ball::getMass() const {
     // TODO: место для доработки
-    return {};
+    return M_PI * pow(m_radius, 3.) * 4. / 3.;
 }

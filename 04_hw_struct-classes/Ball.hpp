@@ -12,4 +12,10 @@ public:
     Point getCenter() const;
     double getRadius() const;
     double getMass() const;
+    void setColor(const Color& color);
+private:
+    Velocity m_velocity;
+    Point m_center;
+    double m_radius;
+    Color m_color;
 };
