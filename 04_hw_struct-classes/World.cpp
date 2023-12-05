@@ -68,7 +68,7 @@ World::World(const std::string& worldFilePath) {
         Velocity velocity(vx, vy);
         Color color(red, green, blue);
         
-        Ball ball;
+        Ball ball(radius);
         ball.setCenter(center);
         ball.setVelocity(velocity);
         ball.setColor(color);

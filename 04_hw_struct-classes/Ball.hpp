@@ -5,6 +5,8 @@
 
 class Ball {
 public:
+    Ball(double radius)
+        : m_radius(radius) {}
     void setVelocity(const Velocity& velocity);
     Velocity getVelocity() const;
     void draw(Painter& painter) const;
