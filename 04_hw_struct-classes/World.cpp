@@ -66,7 +66,8 @@ World::World(const std::string& worldFilePath) {
         // выше, и его помещения в контейнер balls
         
         Point center(x, y);
-        Velocity velocity(vx, vy);
+        Point vector(vx, vy);
+        Velocity velocity(vector);
         Color color(red, green, blue);
         
         Ball ball(center, velocity, color, radius);
