@@ -35,7 +35,7 @@ std::ostream& operator<<(std::ostream &os, const MySequentialContainer<T> & cont
         os << container.data_[i] << " ";
     }
     return os;
-}
+};
 
 template <typename T>
 void MySequentialContainer<T>::push_back(T value) {
