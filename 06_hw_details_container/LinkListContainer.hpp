@@ -3,11 +3,17 @@
 
 template <typename T>
 struct Node {
-    Node() {
-      next = nullptr;
-      prev = nullptr;
-    }
+    Node(): next{nullptr}, prev{nullptr}{}
+	Node(T data): next{nullptr}, prev{nullptr}, data{data}{}
 
+	Node(const Node&) = delete;
+	Node(Node&&) = default;
+	
+    Node& operator=(Node&) = delete;
+	Node& operator=(Node&&) = default;
+	
+    ~Node() = default;
+    
     Node* next;
     Node* prev;
     T data;
@@ -20,9 +26,6 @@ public:
         : size_{0}
         , first_{nullptr} {}
     ~MyLinkListContainer1() {
-        if (first_ == nullptr) {
-            return;
-        }
         Node<T>* tmp = first_;
         while (tmp != nullptr) {
             Node<T>* next = tmp->next;
@@ -30,13 +33,71 @@ public:
             tmp = next;
         }
     };
+    MyLinkListContainer1(const MyLinkListContainer1& other)
+        : size_(0)
+        , first_(nullptr) {
+            Node<T>* last = nullptr;
+            for (Node<T>* tmp = other.first_; tmp != nullptr; tmp = tmp->next) {
+                Node<T>* new_item = new Node(tmp->data);
+                if(!first_) {
+                    first_ = new_item;
+                } else {
+                    last->next = new_item;
+                }
+                last = new_item;
+                ++size_;
+            }
+    }
+    MyLinkListContainer1(MyLinkListContainer1&& other) noexcept {
+        size_ = other.size_;
+        first_ = other.first_;
+        other.first_ = nullptr;
+    }
+    MyLinkListContainer1& operator=(MyLinkListContainer1& other) {
+        if (this == &other)
+            return *this;
+        Node<T>* tmp = first_;
+        while (tmp != nullptr) {
+            Node<T>* next = tmp->next;
+            delete tmp;
+            tmp = next;
+        }
+        first_ = nullptr;
+        size_ = 0;
+        Node<T>* last = nullptr;
+        for (Node<T>* tmp = other.first_; tmp != nullptr; tmp = tmp->next) {
+            Node<T>* new_item = new Node(tmp->data);
+            if(!first_) {
+                first_ = new_item;
+            } else {
+                last->next = new_item;
+            }
+            last = new_item;
+            ++size_;
+        }
+        return *this;
+    }
+    MyLinkListContainer1& operator=(MyLinkListContainer1&& other) {
+        if (this == &other)
+            return *this;
+        Node<T>* tmp = first_;
+        while (tmp != nullptr) {
+            Node<T>* next = tmp->next;
+            delete tmp;
+            tmp = next;
+        }
+        size_ = other.size_;
+        first_ = other.first_;
+        other.first_ = nullptr;
+        return *this;
+    }
 
     void push_back(T value);
     void insert(std::size_t index, T value);
     void erase(std::size_t index);
     size_t size();
 
-    T operator[](std::size_t index);
+    T& operator[](std::size_t index);
     template <typename U> friend std::ostream& operator<<(std::ostream &os, const MyLinkListContainer1<U>& container);
 
 private:
@@ -45,7 +106,7 @@ private:
 };
 
 template <typename T>
-T MyLinkListContainer1<T>::operator[](std::size_t index) {
+T& MyLinkListContainer1<T>::operator[](std::size_t index) {
     if (index >= size_) {
         throw std::logic_error("IndexError");
     }
@@ -74,9 +135,7 @@ std::ostream& operator<<(std::ostream &os, const MyLinkListContainer1<T> & conta
 
 template <typename T>
 void MyLinkListContainer1<T>::push_back(T value) {
-    Node<T>* new_node = new Node<T>();
-    new_node->data = value;
-    new_node->next = nullptr;
+    Node<T>* new_node = new Node<T>(value);
     if (first_ == nullptr) {
         first_ = new_node;
     } else {
@@ -86,7 +145,7 @@ void MyLinkListContainer1<T>::push_back(T value) {
         }
         tmp->next = new_node;
     }
-    size_ += 1;
+    ++size_;
 };
 
 template <typename T>
@@ -94,8 +153,7 @@ void MyLinkListContainer1<T>::insert(std::size_t index, T value) {
     if (index >= size_) {
         throw std::logic_error("IndexError");
     }
-    Node<T>* new_node = new Node<T>();
-    new_node->data = value;
+    Node<T>* new_node = new Node<T>(value);
     Node<T>* tmp = first_;
     if (index == 0) {
         new_node->next = tmp;
@@ -113,7 +171,7 @@ void MyLinkListContainer1<T>::insert(std::size_t index, T value) {
             tmp = tmp->next;
         };
     };
-    size_ += 1;
+    ++size_;
 };
 
 template <typename T>
@@ -124,7 +182,7 @@ void MyLinkListContainer1<T>::erase(std::size_t index) {
     Node<T>* tmp = first_;
     if (index == 0) {
         tmp = first_->next;
-        delete [] first_;
+        delete first_;
         first_ = tmp;
     } else {
         tmp = tmp->next;
@@ -132,7 +190,7 @@ void MyLinkListContainer1<T>::erase(std::size_t index) {
         for (size_t i = 1; i < size_; ++i) {
             if (i == index) {
                 prev->next = tmp->next;
-                delete [] tmp;
+                delete tmp;
                 break;
             }                
             prev = prev->next;
