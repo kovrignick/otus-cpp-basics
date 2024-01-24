@@ -107,12 +107,10 @@ T& MyLinkListContainer1<T>::operator[](std::size_t index) {
         throw std::logic_error("IndexError");
     }
     Node<T>* tmp = first_;
-    for (size_t i = 0; i < size_; ++i) {
-        if (i == index)
-            return tmp->data;
+    for (size_t i = 0; i < index; ++i) {
         tmp = tmp->next;
     };
-    throw std::logic_error("IndexError");
+    return tmp->data;
 };
 
 template <typename T>
