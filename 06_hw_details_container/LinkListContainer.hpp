@@ -148,22 +148,19 @@ void MyLinkListContainer1<T>::insert(std::size_t index, T value) {
         throw std::logic_error("IndexError");
     }
     Node<T>* new_node = new Node<T>(value);
-    Node<T>* tmp = first_;
+    Node<T>* temp = first_;
     if (index == 0) {
-        new_node->next = tmp;
+        new_node->next = temp;
         first_ = new_node;
     } else {
-        tmp = tmp->next;
-        Node<T>* prev = first_;
-        for (size_t i = 1; i < size_; ++i) {
-            if (i == index) {
-                prev->next = new_node;
-                new_node->next = tmp;
-                break;
-            }                
-            prev = prev->next;
-            tmp = tmp->next;
+        temp = temp->next;
+        Node<T>* previous = first_;
+        for (size_t i = 1; i < index; ++i) {              
+            previous = previous->next;
+            temp = temp->next;
         };
+        previous->next = new_node;
+        new_node->next = temp;
     };
     ++size_;
 };
@@ -173,23 +170,20 @@ void MyLinkListContainer1<T>::erase(std::size_t index) {
     if (index >= size_) {
         throw std::logic_error("IndexError");        
     }
-    Node<T>* tmp = first_;
+    Node<T>* temp = first_;
     if (index == 0) {
-        tmp = first_->next;
+        temp = first_->next;
         delete first_;
-        first_ = tmp;
+        first_ = temp;
     } else {
-        tmp = tmp->next;
-        Node<T>* prev = first_;
-        for (size_t i = 1; i < size_; ++i) {
-            if (i == index) {
-                prev->next = tmp->next;
-                delete tmp;
-                break;
-            }                
-            prev = prev->next;
-            tmp = tmp->next;
+        temp = temp->next;
+        Node<T>* previous = first_;
+        for (size_t i = 1; i < index; ++i) {
+            previous = previous->next;
+            temp = temp->next;             
         };
+        previous->next = temp->next;
+        delete temp;
     }
     size_ -= 1;
 };
