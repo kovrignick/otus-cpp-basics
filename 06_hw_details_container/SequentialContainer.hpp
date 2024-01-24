@@ -1,37 +1,36 @@
 #pragma once
 #include <iostream>
+#include <utility>
 
 template <typename T>
 class MySequentialContainer {
 public:
-    MySequentialContainer(): data_{nullptr}, size_{0} {}
+    MySequentialContainer(): size_{0}, data_{nullptr} {}
 
     ~MySequentialContainer() { delete [] data_; };
 
     MySequentialContainer(const MySequentialContainer& other)
-        : size_(0)
-        , data_(nullptr) {
+        : MySequentialContainer() {
             for (size_t i = 0; i < other.size_; ++i) {
                 this->push_back(other.data_[i]);
         }
     };
 
-    MySequentialContainer(MySequentialContainer&& other) {
-        this->data_ = other.data_;
-        this->size_ = other.size_;
-        other.data_ = nullptr;
-        other.size_ = 0;
+    MySequentialContainer(MySequentialContainer&& other) noexcept 
+        : MySequentialContainer() {
+            std::swap(this->data_, other.data_);
+            std::swap(this->size_, other.size_);
+            std::swap(this->capacity_, other.capacity_);
     };
 
     MySequentialContainer& operator=(const MySequentialContainer& other) {
         if (this == &other)
             return *this;
         delete [] data_;
-        data_ = nullptr;
-        size_ = 0;
-        for (size_t i = 0; i < other.size_; ++i) {
-            this->push_back(other.data_[i]);
-        }
+        MySequentialContainer temp{other};
+        std::swap(this->data_, temp.data_);
+        std::exchange(this->size_, temp.size_);
+        std::exchange(this->capacity_, temp.capacity_);
         return *this;
     };
 
@@ -40,10 +39,11 @@ public:
             return *this;
         delete [] data_;
         data_ = nullptr;
-        this->data_ = other.data_;
-        this->size_ = other.size_;
-        other.data_ = nullptr;
-        other.size_ = 0;
+        size_ = 0;
+        capacity_ = 5;
+        std::swap(this->data_, other.data_);
+        std::swap(this->size_, other.size_);
+        std::swap(this->capacity_, other.capacity_);
         return *this;
     };
 
@@ -62,9 +62,9 @@ public:
     template <typename U> friend std::ostream& operator<<(std::ostream &os, const MySequentialContainer<U>& container);
 
 private:
-    T * data_ ;
-    size_t size_ ;
     size_t capacity_ = 5 ;
+    size_t size_ ;
+    T * data_ ;
 };
 
 template <typename T>
@@ -72,13 +72,7 @@ T MySequentialContainer<T>::operator[](std::size_t index) {
     if (index >= size_) {
         throw std::logic_error("IndexError");
     }
-    size_t i = 0;
-    while (i < size_) {
-        if (i == index)
-            return data_[i];
-        ++i;
-    }
-    throw std::logic_error("IndexError");
+    return data_[index];
 };
 
 template <typename T>

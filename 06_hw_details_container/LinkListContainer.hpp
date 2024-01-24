@@ -40,8 +40,7 @@ public:
     };
 
     MyLinkListContainer1(const MyLinkListContainer1& other)
-        : size_(0)
-        , first_(nullptr) {
+        : MyLinkListContainer1() {
             Node<T>* last = nullptr;
             for (Node<T>* tmp = other.first_; tmp != nullptr; tmp = tmp->next) {
                 Node<T>* new_item = new Node(tmp->data);
