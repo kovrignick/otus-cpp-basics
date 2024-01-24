@@ -77,9 +77,10 @@ public:
             delete tmp;
             tmp = next;
         }
-        size_ = other.size_;
-        first_ = other.first_;
-        other.first_ = nullptr;
+        std::swap(this->first_, other.first_);
+        std::exchange(this->size_, other.size_);
+        std::exchange(other.size_, 0);
+        std::exchange(other.first_, nullptr);
         return *this;
     }
 
