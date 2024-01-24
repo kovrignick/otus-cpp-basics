@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <utility>
 
 template <typename T>
 struct Node {
@@ -61,27 +62,9 @@ public:
     }
 
     MyLinkListContainer1& operator=(const MyLinkListContainer1& other) {
-        if (this == &other)
-            return *this;
-        Node<T>* tmp = first_;
-        while (tmp != nullptr) {
-            Node<T>* next = tmp->next;
-            delete tmp;
-            tmp = next;
-        }
-        first_ = nullptr;
-        size_ = 0;
-        Node<T>* last = nullptr;
-        for (Node<T>* tmp = other.first_; tmp != nullptr; tmp = tmp->next) {
-            Node<T>* new_item = new Node(tmp->data);
-            if(!first_) {
-                first_ = new_item;
-            } else {
-                last->next = new_item;
-            }
-            last = new_item;
-            ++size_;
-        }
+        MyLinkListContainer1 temp{other};
+        std::swap(this->first_, temp.first_);
+        std::exchange(this->size_, temp.size_);
         return *this;
     }
 
