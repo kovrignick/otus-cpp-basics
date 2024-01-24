@@ -4,13 +4,16 @@
 template <typename T>
 struct Node {
     Node(): next{nullptr}, prev{nullptr}{}
+
 	Node(T data): next{nullptr}, prev{nullptr}, data{data}{}
 
 	Node(const Node&) = delete;
-	Node(Node&&) = default;
 	
-    Node& operator=(Node&) = delete;
-	Node& operator=(Node&&) = default;
+    Node(Node&&) = default;
+	
+    Node& operator=(const Node&) = delete;
+	
+    Node& operator=(Node&&) = default;
 	
     ~Node() = default;
     
@@ -25,6 +28,7 @@ public:
     MyLinkListContainer1()
         : size_{0}
         , first_{nullptr} {}
+
     ~MyLinkListContainer1() {
         Node<T>* tmp = first_;
         while (tmp != nullptr) {
@@ -33,6 +37,7 @@ public:
             tmp = next;
         }
     };
+
     MyLinkListContainer1(const MyLinkListContainer1& other)
         : size_(0)
         , first_(nullptr) {
@@ -48,12 +53,14 @@ public:
                 ++size_;
             }
     }
+
     MyLinkListContainer1(MyLinkListContainer1&& other) noexcept {
         size_ = other.size_;
         first_ = other.first_;
         other.first_ = nullptr;
     }
-    MyLinkListContainer1& operator=(MyLinkListContainer1& other) {
+
+    MyLinkListContainer1& operator=(const MyLinkListContainer1& other) {
         if (this == &other)
             return *this;
         Node<T>* tmp = first_;
@@ -77,6 +84,7 @@ public:
         }
         return *this;
     }
+
     MyLinkListContainer1& operator=(MyLinkListContainer1&& other) {
         if (this == &other)
             return *this;
@@ -93,11 +101,15 @@ public:
     }
 
     void push_back(T value);
+
     void insert(std::size_t index, T value);
+
     void erase(std::size_t index);
+
     size_t size();
 
     T& operator[](std::size_t index);
+
     template <typename U> friend std::ostream& operator<<(std::ostream &os, const MyLinkListContainer1<U>& container);
 
 private:

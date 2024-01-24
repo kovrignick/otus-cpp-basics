@@ -5,6 +5,7 @@ template <typename T>
 class MySequentialContainer {
 public:
     MySequentialContainer(): data_{nullptr}, size_{0} {}
+
     ~MySequentialContainer() { delete [] data_; };
 
     MySequentialContainer(const MySequentialContainer& other)
@@ -14,13 +15,15 @@ public:
                 this->push_back(other.data_[i]);
         }
     };
+
     MySequentialContainer(MySequentialContainer&& other) {
         this->data_ = other.data_;
         this->size_ = other.size_;
         other.data_ = nullptr;
         other.size_ = 0;
     };
-    MySequentialContainer& operator=(MySequentialContainer& other) {
+
+    MySequentialContainer& operator=(const MySequentialContainer& other) {
         if (this == &other)
             return *this;
         delete [] data_;
@@ -31,6 +34,7 @@ public:
         }
         return *this;
     };
+
     MySequentialContainer& operator=(MySequentialContainer&& other) {
         if (this == &other)
             return *this;
@@ -44,12 +48,17 @@ public:
     };
 
     void push_back(T value);
+
     void insert(std::size_t index, T value);
+
     void erase(std::size_t index);
+
     size_t size();
+
     size_t capacity();
 
     T operator[](std::size_t index);
+
     template <typename U> friend std::ostream& operator<<(std::ostream &os, const MySequentialContainer<U>& container);
 
 private:
