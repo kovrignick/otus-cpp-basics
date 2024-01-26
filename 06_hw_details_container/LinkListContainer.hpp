@@ -143,9 +143,12 @@ void MyLinkListContainer1<T>::push_back(T value) {
 
 template <typename T>
 void MyLinkListContainer1<T>::insert(std::size_t index, T value) {
-    if (index >= size_) {
+    if (index > size_) {
         throw std::logic_error("IndexError");
     }
+    if (size_ == 0 and index == 0) {
+        first_ = new Node<T>(value);
+    } else {
     Node<T>* new_node = new Node<T>(value);
     Node<T>* temp = first_;
     if (index == 0) {
@@ -160,6 +163,7 @@ void MyLinkListContainer1<T>::insert(std::size_t index, T value) {
         };
         previous->next = new_node;
         new_node->next = temp;
+    };
     };
     ++size_;
 };

@@ -7,6 +7,13 @@ class MySequentialContainer {
 public:
     MySequentialContainer(): size_{0}, data_{nullptr} {}
 
+    MySequentialContainer(size_t capacity)
+        : capacity_{capacity}
+        , size_{0}
+        , data_{nullptr} {
+            data_ = new T[capacity];
+        }
+
     ~MySequentialContainer() { delete [] data_; };
 
     MySequentialContainer(const MySequentialContainer& other)
@@ -65,7 +72,19 @@ private:
     size_t capacity_ = 5 ;
     size_t size_ ;
     T * data_ ;
+    void increase_capacity();
 };
+
+template <typename T>
+void MySequentialContainer<T>::increase_capacity() {
+    capacity_ *= 2;
+    MySequentialContainer<T> temp{capacity_};
+    for (size_t i = 0; i < size_; ++i) {
+        temp.data_[i] = data_[i];
+        temp.size_ += 1;
+    }
+    std::swap(temp, *this);
+}
 
 template <typename T>
 T MySequentialContainer<T>::operator[](std::size_t index) {
@@ -89,13 +108,7 @@ void MySequentialContainer<T>::push_back(T value) {
         data_ = new T[capacity_];
     }
     if (capacity_ < size_ + 1) {
-        capacity_ = capacity_ * 2;
-        T * new_data = new T[capacity_];
-        for (size_t i = 0; i < size_; ++i) {
-            new_data[i] = data_[i];
-        }
-        delete [] data_;
-        data_ = new_data;
+        increase_capacity();
     }
     data_[size_] = value;
     ++size_;
@@ -106,30 +119,23 @@ void MySequentialContainer<T>::insert(std::size_t index, T value) {
     if (index > size_) {
         throw std::logic_error("IndexError");
     }
-    if (size_ == 0) {
+    if (size_ == 0 and index == 0) {
         data_ = new T[capacity_];
         data_[0] = value;
-    }
-    if (capacity_ < size_ + 1) {
-        capacity_ = capacity_ * 2;
-        T * new_data = new T[capacity_];
-        for (size_t i = 0; i < size_; ++i) {
-            new_data[i] = data_[i];
+    } else {
+        if (capacity_ < size_ + 1) {
+            increase_capacity();
         }
-        delete [] data_;
-        data_ = new_data;
-    }
-    T tmp;
-    for (size_t i = 0; i < size_; ++i) {
-        if (i == index) {
-            data_[size_] = data_[i];
-            data_[i] = value;
+        MySequentialContainer<T> temp{capacity_};
+        for (size_t i = 0; i < index; ++i) {
+            temp.data_[i] = data_[i];
         }
-        if (i > index) {
-            tmp = data_[i];
-            data_[i] = data_[size_];
-            data_[size_] = tmp;
+        temp.data_[index] = value;
+        for (size_t i = index; i < size_; ++i) {
+            temp.data_[i+1] = data_[i];
         }
+        std::exchange(temp.size_, size_);
+        std::swap(temp, *this);
     }
     ++size_;
 };
@@ -139,10 +145,8 @@ void MySequentialContainer<T>::erase(std::size_t index) {
     if (index >= size_) {
         throw std::logic_error("IndexError");        
     }
-    for (size_t i = 0; i < size_; ++i) {
-        if (i >= index) {
-            data_[i] = data_[i+1];
-        }
+    for (size_t i = index; i < size_; ++i) {
+        data_[i] = data_[i+1];
     }
     --size_;
 };
