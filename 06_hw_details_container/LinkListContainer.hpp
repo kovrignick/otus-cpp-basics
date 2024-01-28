@@ -58,6 +58,7 @@ public:
         size_ = other.size_;
         first_ = other.first_;
         other.first_ = nullptr;
+        other.size_ = 0;
     }
 
     MyLinkListContainer1& operator=(const MyLinkListContainer1& other) {
