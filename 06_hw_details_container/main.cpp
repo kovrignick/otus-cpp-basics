@@ -43,12 +43,12 @@ void rule_of_five_manual_test() {
     MySequentialContainer<int> seq_int2;
     seq_int2.push_back(4);
     seq_int2.push_back(5);
-    //
+    // ----
     // MySequentialContainer<int> seq_int2 {seq_int};
     // MySequentialContainer<int> seq_int2 {std::move(seq_int)};
     // seq_int2 = seq_int;
     seq_int2 = std::move(seq_int);
-    //
+    // ----
     seq_int.push_back(3);
     seq_int.push_back(4);
     seq_int2.push_back(6);
@@ -72,12 +72,12 @@ void rule_of_five_manual_test() {
     MyLinkListContainer1<int> link2;
     link2.push_back(4);
     link2.push_back(5);
-    //
+    // ----
     // MyLinkListContainer1<int> link2 {linklist1_int};
     // MyLinkListContainer1<int> link2 {std::move(linklist1_int)};
     // link2 = linklist1_int;
     link2 = std::move(linklist1_int);
-    //
+    // ----
     linklist1_int.push_back(3);
     linklist1_int.push_back(4);
     link2.push_back(6);
@@ -97,6 +97,7 @@ void rule_of_five_manual_test() {
 int main() 
 {
     rule_of_five_manual_test();
+
     // Sequential container
     std::cout << "Sequential container: " << std::endl;
     // 1

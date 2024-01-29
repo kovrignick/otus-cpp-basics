@@ -17,11 +17,11 @@ public:
     ~MySequentialContainer() { delete [] data_; };
 
     MySequentialContainer(const MySequentialContainer& other)
-        : MySequentialContainer() {
-            for (size_t i = 0; i < other.size_; ++i) {
-                this->push_back(other.data_[i]);
+        : capacity_{other.capacity_}, size_{other.size_}, data_{new T[capacity_]} {
+            for (size_t i = 0; i < size_; ++i) {
+                this->data_[i] = other.data_[i];
+            }
         }
-    };
 
     MySequentialContainer(MySequentialContainer&& other) noexcept 
         : MySequentialContainer() {
@@ -33,7 +33,6 @@ public:
     MySequentialContainer& operator=(const MySequentialContainer& other) {
         if (this == &other)
             return *this;
-        delete [] data_;
         MySequentialContainer temp{other};
         std::swap(this->data_, temp.data_);
         std::exchange(this->size_, temp.size_);

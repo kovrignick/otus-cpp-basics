@@ -54,11 +54,10 @@ public:
             }
     }
 
-    MyLinkListContainer1(MyLinkListContainer1&& other) noexcept {
-        size_ = other.size_;
-        first_ = other.first_;
-        other.first_ = nullptr;
-        other.size_ = 0;
+    MyLinkListContainer1(MyLinkListContainer1&& other) noexcept
+        : MyLinkListContainer1() {
+            std::swap(this->first_, other.first_);
+            std::swap(this->size_, other.size_);
     }
 
     MyLinkListContainer1& operator=(const MyLinkListContainer1& other) {
