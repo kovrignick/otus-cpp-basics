@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.7.2)
 
 project(topk_words)
 
+find_package(Threads REQUIRED)
+
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(
@@ -17,3 +19,5 @@ target_compile_options(topk_words PRIVATE
     -Wno-unused-parameter
     -pedantic
 )
+
+target_link_libraries(topk_words PUBLIC Threads::Threads)
