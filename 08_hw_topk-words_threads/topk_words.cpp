@@ -21,6 +21,8 @@ std::string tolower(const std::string &str);
 
 void count_words(std::istream& stream, Counter&, std::mutex &mtx);
 
+void increase_counter(const std::string &s, Counter& counter, std::mutex &mtx);
+
 void print_topk(std::ostream& stream, const Counter&, const size_t k);
 
 int main(int argc, char *argv[]) {
@@ -67,10 +69,16 @@ std::string tolower(const std::string &str) {
 };
 
 void count_words(std::istream& stream, Counter& counter, std::mutex &mtx) {
-    const std::lock_guard lock(mtx);
     std::for_each(std::istream_iterator<std::string>(stream),
                   std::istream_iterator<std::string>(),
-                  [&counter](const std::string &s) { ++counter[tolower(s)]; });    
+                  [&counter, &mtx](const std::string& s){increase_counter(s, counter, mtx);}); 
+}
+
+void increase_counter(const std::string &s, Counter& counter, std::mutex &mtx) {
+    std::string low_s = tolower(s);
+    mtx.lock();
+    ++counter[low_s];
+    mtx.unlock();
 }
 
 void print_topk(std::ostream& stream, const Counter& counter, const size_t k) {
