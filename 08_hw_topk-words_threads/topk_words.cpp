@@ -10,7 +10,6 @@
 #include <map>
 #include <vector>
 #include <chrono>
-#include <mutex>
 #include <thread>
 
 const size_t TOPK = 10;
