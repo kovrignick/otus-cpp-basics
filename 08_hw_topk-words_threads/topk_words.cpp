@@ -10,10 +10,17 @@
 #include <map>
 #include <vector>
 #include <chrono>
+#include <thread>
 
 const size_t TOPK = 10;
 
 using Counter = std::map<std::string, std::size_t>;
+
+const Counter operator+ (const Counter& lhs, const Counter& rhs) {
+    auto result = lhs;
+    for (auto& [string, size]: rhs) result[string] += size;
+    return result;
+}
 
 std::string tolower(const std::string &str);
 
@@ -28,16 +35,32 @@ int main(int argc, char *argv[]) {
     }
 
     auto start = std::chrono::high_resolution_clock::now();
-    Counter freq_dict;
+    std::vector<std::ifstream> files;
     for (int i = 1; i < argc; ++i) {
-        std::ifstream input{argv[i]};
-        if (!input.is_open()) {
+        files.emplace_back(argv[i]);
+        if (!files[i-1].is_open()) {
             std::cerr << "Failed to open file " << argv[i] << '\n';
             return EXIT_FAILURE;
         }
-        count_words(input, freq_dict);
     }
-
+    std::vector<std::thread> threads;
+    std::vector<Counter> counters{files.size()};
+    size_t i = 0;
+    for (auto& input: files) {
+        std::thread count_th{count_words, std::ref(input), std::ref(counters[i])};
+        std::cout << "count_th " << count_th.get_id() << " started working\n";
+        threads.emplace_back(std::move(count_th));
+        ++i;
+    }
+    for (auto &count_th: threads) {
+        std::thread::id clerk_id = count_th.get_id();
+        count_th.join();
+        std::cout << "count_th " << clerk_id << " ended his work\n";
+    }
+    Counter freq_dict;
+    for (auto& counter : counters) { 
+        freq_dict = freq_dict + counter; 
+    }
     print_topk(std::cout, freq_dict, TOPK);
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed_ms = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
